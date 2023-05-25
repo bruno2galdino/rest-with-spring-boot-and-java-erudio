@@ -26,6 +26,7 @@ import br.com.erudio.data.vo.v1.security.TokenVO;
 import br.com.erudio.integrationtests.testcontainer.AbstractIntegrationTest;
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO;
 import br.com.erudio.integrationtests.vo.PersonVO;
+import br.com.erudio.integrationtests.vo.pagedmodels.PagedModelPerson;
 import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -211,6 +212,7 @@ public class PersonControllerXMLTest extends AbstractIntegrationTest {
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_XML)
                 .accept(TestConfigs.CONTENT_TYPE_XML)
+                .queryParam("page",1,"size",10, "direction", "asc")
                 .when()
                 .get()
                 .then()
@@ -218,22 +220,22 @@ public class PersonControllerXMLTest extends AbstractIntegrationTest {
                 .extract()
                 .body()
                 .asString();
-        WrapperPersonVO wrapper= objectMapper.readValue(content, WrapperPersonVO.class);
-        var people = wrapper.getEmbedded().getPersons();
+        PagedModelPerson wrapper= objectMapper.readValue(content, PagedModelPerson.class);
+        var people = wrapper.getContent();
         
         PersonVO foundPersonOne = people.get(0);
 
-        assertEquals(3, foundPersonOne.getId());
+        assertEquals(881, foundPersonOne.getId());
 
-        assertEquals("Ana Luiza", foundPersonOne.getFirstName());
-        assertEquals("Oliveira Galdino", foundPersonOne.getLastName());
+        assertEquals("Adlai", foundPersonOne.getFirstName());
+        assertEquals("Dallan", foundPersonOne.getLastName());
 
         PersonVO foundPersonSix = people.get(4);
 
-        assertEquals(8, foundPersonSix.getId());
+        assertEquals(248, foundPersonSix.getId());
 
-        assertEquals("Ronei", foundPersonSix.getFirstName());
-        assertEquals("Antunes", foundPersonSix.getLastName());
+        assertEquals("Ag", foundPersonSix.getFirstName());
+        assertEquals("Dow", foundPersonSix.getLastName());
     }
 
     @Test
@@ -253,6 +255,32 @@ public class PersonControllerXMLTest extends AbstractIntegrationTest {
                 .get()
                 .then()
                 .statusCode(403);
+    }
+
+    @Test
+    @Order(6)
+    public void testeFindByName() throws JsonMappingException, JsonProcessingException {
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
+                .pathParam("firstName", "ayr")
+                .queryParam("page",0,"size",10, "direction", "asc")
+                .when()
+                .get("findPersonByName/{firstName}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+        PagedModelPerson wrapper= objectMapper.readValue(content, PagedModelPerson.class);
+        var people = wrapper.getContent();
+        
+        PersonVO foundPersonOne = people.get(0);
+
+        assertEquals(111, foundPersonOne.getId());
+
+        assertEquals("Sayres", foundPersonOne.getFirstName());
+        assertEquals("Baine", foundPersonOne.getLastName());   
     }
 
     private void mockPerson() {

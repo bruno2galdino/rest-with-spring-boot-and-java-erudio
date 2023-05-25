@@ -199,6 +199,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
     public void testeFindAll() throws JsonMappingException, JsonProcessingException {
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .queryParam("page",1,"size",10, "direction", "asc")
                 .when()
                 .get()
                 .then()
@@ -211,17 +212,17 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         
         PersonVO foundPersonOne = people.get(0);
 
-        assertEquals(3, foundPersonOne.getId());
+        assertEquals(881, foundPersonOne.getId());
 
-        assertEquals("Ana Luiza", foundPersonOne.getFirstName());
-        assertEquals("Oliveira Galdino", foundPersonOne.getLastName());
+        assertEquals("Adlai", foundPersonOne.getFirstName());
+        assertEquals("Dallan", foundPersonOne.getLastName());
 
         PersonVO foundPersonSix = people.get(4);
 
-        assertEquals(8, foundPersonSix.getId());
+        assertEquals(248, foundPersonSix.getId());
 
-        assertEquals("Ronei", foundPersonSix.getFirstName());
-        assertEquals("Antunes", foundPersonSix.getLastName());
+        assertEquals("Ag", foundPersonSix.getFirstName());
+        assertEquals("Dow", foundPersonSix.getLastName());
     }
 
     @Test
@@ -240,6 +241,49 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
                 .get()
                 .then()
                 .statusCode(403);
+    }
+
+    @Test
+    @Order(8)
+    public void testeFindByName() throws JsonMappingException, JsonProcessingException {
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .pathParam("firstName", "ayr")
+                .queryParam("page",0,"size",6, "direction", "asc")
+                .when()
+                .get("findPersonByName/{firstName}")
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+        WrapperPersonVO wrapper= objectMapper.readValue(content, WrapperPersonVO.class);
+        var people = wrapper.getEmbedded().getPersons();
+        
+        PersonVO foundPersonOne = people.get(0);
+
+        assertEquals(111, foundPersonOne.getId());
+
+        assertEquals("Sayres", foundPersonOne.getFirstName());
+        assertEquals("Baine", foundPersonOne.getLastName());    
+    }
+
+    @Test
+    @Order(9)
+    public void testeHATEOAS() throws JsonMappingException, JsonProcessingException {
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .queryParam("page",1,"size",10, "direction", "asc")
+                .when()
+                .get()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/person/v1/881\"}}},"));
+        assertTrue(content.contains("\"prev\":{\"href\":\"http://localhost:8888/person/v1?direction=asc&page=0&size=12&sort=firstName,asc\"},"));
+        assertTrue(content.contains("\"next\":{\"href\":\"http://localhost:8888/person/v1?direction=asc&page=2&size=12&sort=firstName,asc\"},"));       
     }
 
     private void mockPerson() {

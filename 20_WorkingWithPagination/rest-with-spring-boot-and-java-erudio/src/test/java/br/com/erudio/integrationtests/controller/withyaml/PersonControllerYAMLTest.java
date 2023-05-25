@@ -25,6 +25,7 @@ import br.com.erudio.integrationtests.controller.withyaml.mapper.YMLMapper;
 import br.com.erudio.integrationtests.testcontainer.AbstractIntegrationTest;
 import br.com.erudio.integrationtests.vo.AccountCredentialsVO;
 import br.com.erudio.integrationtests.vo.PersonVO;
+import br.com.erudio.integrationtests.vo.pagedmodels.PagedModelPerson;
 import br.com.erudio.integrationtests.vo.wrappers.WrapperPersonVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -265,35 +266,30 @@ public class PersonControllerYAMLTest extends AbstractIntegrationTest {
                                                                                                 ContentType.TEXT)))
                                 .contentType(TestConfigs.CONTENT_TYPE_YML)
                                 .accept(TestConfigs.CONTENT_TYPE_YML)
+                                .queryParam("page", 1, "size", 10, "direction", "asc")
                                 .when()
                                 .get()
                                 .then()
                                 .statusCode(200)
                                 .extract()
                                 .body()
-                                .as(WrapperPersonVO.class, objectYmlMapper);
+                                .as(PagedModelPerson.class, objectYmlMapper);
 
-                var people = wrapper.getEmbedded().getPersons();
+                var people = wrapper.getContent();
 
                 PersonVO foundPersonOne = people.get(0);
 
-                assertNotNull(foundPersonOne.getId());
-                assertNotNull(foundPersonOne.getFirstName());
-                assertNotNull(foundPersonOne.getLastName());
-                assertNotNull(foundPersonOne.getAddress());
-                assertNotNull(foundPersonOne.getGender());
+                assertEquals(881, foundPersonOne.getId());
 
-                assertEquals(3, foundPersonOne.getId());
-
-                assertEquals("Ana Luiza", foundPersonOne.getFirstName());
-                assertEquals("Oliveira Galdino", foundPersonOne.getLastName());
+                assertEquals("Adlai", foundPersonOne.getFirstName());
+                assertEquals("Dallan", foundPersonOne.getLastName());
 
                 PersonVO foundPersonSix = people.get(4);
 
-                assertEquals(8, foundPersonSix.getId());
+                assertEquals(248, foundPersonSix.getId());
 
-                assertEquals("Ronei", foundPersonSix.getFirstName());
-                assertEquals("Antunes", foundPersonSix.getLastName());
+                assertEquals("Ag", foundPersonSix.getFirstName());
+                assertEquals("Dow", foundPersonSix.getLastName());
         }
 
         @Test
@@ -320,6 +316,39 @@ public class PersonControllerYAMLTest extends AbstractIntegrationTest {
                                 .get()
                                 .then()
                                 .statusCode(403);
+        }
+
+        @Test
+        @Order(8)
+        public void testFindByName() throws JsonMappingException, JsonProcessingException {
+
+                var wrapper = given().spec(specification)
+                                .config(
+                                                RestAssuredConfig
+                                                                .config()
+                                                                .encoderConfig(EncoderConfig.encoderConfig()
+                                                                                .encodeContentTypeAs(
+                                                                                                TestConfigs.CONTENT_TYPE_YML,
+                                                                                                ContentType.TEXT)))
+                                .contentType(TestConfigs.CONTENT_TYPE_YML)
+                                .accept(TestConfigs.CONTENT_TYPE_YML)
+                                .pathParam("firstName", "ayr")
+                                .queryParam("page", 0, "size", 10, "direction", "asc")
+                                .when()
+                                .get("findPersonByName/{firstName}")
+                                .then()
+                                .statusCode(200)
+                                .extract()
+                                .body()
+                                .as(PagedModelPerson.class, objectYmlMapper);
+
+                var people = wrapper.getContent();
+
+                PersonVO foundPersonOne = people.get(0);
+
+                assertEquals(111, foundPersonOne.getId());
+        
+                assertEquals("Sayres", foundPersonOne.getFirstName());
         }
 
         private void mockPerson() {
