@@ -286,10 +286,10 @@ public class PersonControllerYAMLTest extends AbstractIntegrationTest {
 
                 PersonVO foundPersonSix = people.get(4);
 
-                assertEquals(248, foundPersonSix.getId());
+                assertEquals(1009, foundPersonSix.getId());
 
-                assertEquals("Ag", foundPersonSix.getFirstName());
-                assertEquals("Dow", foundPersonSix.getLastName());
+                assertEquals("Afonso", foundPersonSix.getFirstName());
+                assertEquals("Constanco", foundPersonSix.getLastName());
         }
 
         @Test
