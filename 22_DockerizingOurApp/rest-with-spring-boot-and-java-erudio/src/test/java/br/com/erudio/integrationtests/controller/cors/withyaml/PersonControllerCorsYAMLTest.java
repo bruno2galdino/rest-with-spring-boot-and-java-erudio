@@ -116,7 +116,7 @@ public class PersonControllerCorsYAMLTest extends AbstractIntegrationTest {
 	@Test
 	@Order(3)
 	public void testeFindById() throws JsonMappingException, JsonProcessingException {
-		mockPerson();
+		//mockPerson();
 
 		var createdPerson = given().spec(specification)
 						.config(RestAssuredConfig

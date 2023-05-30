@@ -101,7 +101,7 @@ public class PersonControllerCorsXMLTest extends AbstractIntegrationTest {
 	@Test
 	@Order(2)
 	public void testeCreateWithWrongOrigin() throws JsonMappingException, JsonProcessingException {
-		mockPerson();
+		//mockPerson();
 
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)
@@ -121,7 +121,7 @@ public class PersonControllerCorsXMLTest extends AbstractIntegrationTest {
 	@Test
 	@Order(3)
 	public void testeFindById() throws JsonMappingException, JsonProcessingException {
-		mockPerson();
+		//mockPerson();
 
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_XML)

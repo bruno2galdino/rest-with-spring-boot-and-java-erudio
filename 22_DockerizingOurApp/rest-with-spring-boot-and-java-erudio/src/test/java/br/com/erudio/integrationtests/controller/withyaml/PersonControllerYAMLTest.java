@@ -157,7 +157,7 @@ public class PersonControllerYAMLTest extends AbstractIntegrationTest {
         @Test
         @Order(3)
         public void testDisabled() throws JsonMappingException, JsonProcessingException {
-                mockPerson();
+                //mockPerson();
 
                 var persistedPerson = given().spec(specification)
                                 .config(
@@ -196,7 +196,7 @@ public class PersonControllerYAMLTest extends AbstractIntegrationTest {
         @Test
         @Order(4)
         public void testFindById() throws JsonMappingException, JsonProcessingException {
-                mockPerson();
+                //mockPerson();
 
                 var persistedPerson = given().spec(specification)
                                 .config(
