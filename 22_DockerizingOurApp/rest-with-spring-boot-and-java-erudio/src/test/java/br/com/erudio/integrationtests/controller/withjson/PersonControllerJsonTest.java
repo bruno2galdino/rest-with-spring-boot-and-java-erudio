@@ -268,7 +268,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertEquals("Baine", foundPersonOne.getLastName());    
     }
 
-    /*@Test
+    @Test
     @Order(9)
     public void testeHATEOAS() throws JsonMappingException, JsonProcessingException {
         var content = given().spec(specification)
@@ -284,7 +284,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
         assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/person/v1/881\"}}},"));
         assertTrue(content.contains("\"prev\":{\"href\":\"http://localhost:8888/person/v1?direction=asc&page=0&size=12&sort=firstName,asc\"},"));
         assertTrue(content.contains("\"next\":{\"href\":\"http://localhost:8888/person/v1?direction=asc&page=2&size=12&sort=firstName,asc\"},"));       
-    }*/
+    }
 
     private void mockPerson() {
         person.setId(1L);
